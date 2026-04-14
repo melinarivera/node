@@ -3,7 +3,6 @@ require("dotenv").config();
 
 const MONGO_URI = process.env.MONGO_URI;
 
-// Modelo
 const userSchema = new mongoose.Schema({
   nombre: String,
   apellido: String,
@@ -14,32 +13,34 @@ const User = mongoose.model("User", userSchema);
 // CRUD
 async function ejecutarCRUD() {
   try {
+    // no duplicar datos
     await User.deleteMany({ nombre: "Melina" });
 
-    console.log("\ncreate");
+    console.log("\nCreate");
     const nuevo = await User.create({
       nombre: "Melina",
       apellido: "Rivera",
     });
     console.log(nuevo);
 
-    console.log("\nread");
+    console.log("\nRead");
     const usuarios = await User.find();
     console.log(usuarios);
 
-    console.log("\nupdate");
+    console.log("\nUpdate");
     const actualizado = await User.findOneAndUpdate(
       { nombre: "Melina" },
       { apellido: "Rivera Castillo" },
-      { new: true }
+      { returnDocument: "after" } // corregido (sin warning)
     );
     console.log(actualizado);
 
-    console.log("\ndelete");
+    console.log("\nDelete");
     const eliminado = await User.findOneAndDelete({
       nombre: "Melina",
     });
     console.log(eliminado);
+
   } catch (error) {
     console.error("Error en CRUD:", error.message);
   } finally {
